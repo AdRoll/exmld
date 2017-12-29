@@ -45,7 +45,7 @@ defmodule Exmld.KinesisStage do
       * `:event`  - an `Exmld.KinesisWorker.Datum`
     """
     defstruct stage: nil, worker: nil, event: nil
-    @type t :: %Event{stage: pid, worker: term, event: Exmld.KinesisWorker.Datum}
+    @type t :: %Event{stage: pid, worker: term, event: Exmld.KinesisWorker.Datum.t}
   end
 
   def start_link(opts \\ []) do
