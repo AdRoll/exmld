@@ -1,8 +1,8 @@
-%{"b64fast": {:git, "https://github.com/zuckschwerdt/b64fast", "10ec5d034bacca8e7ae57b52488c4c7935fc51a4", [tag: "0.2.1"]},
+%{"b64fast": {:hex, :b64fast, "0.2.1", "ef67efd73109bf52a83338a2ded30d0dc4ec1b11449b4c43db970d3fc96cc9cd", [:rebar], [], "hexpm"},
   "earmark": {:hex, :earmark, "1.2.3", "206eb2e2ac1a794aa5256f3982de7a76bf4579ff91cb28d0e17ea2c9491e46a4", [], [], "hexpm"},
-  "erlexec": {:git, "https://github.com/saleyn/erlexec.git", "e13dfe7f6bb0e5a37436da6ada4b1729593c196c", [tag: "1.6.4"]},
-  "erlmld": {:git, "https://github.com/AdRoll/erlmld.git", "20ed6a48d3cf375edc5f8c188598ac424947c92b", [tag: "v0.1.1"]},
+  "erlexec": {:hex, :erlexec, "1.7.1", "6ddbd40fa202084ed0bdaf95a50c334acaa5644ae213b903cd4094a78ae79734", [:rebar3], [], "hexpm"},
+  "erlmld": {:hex, :erlmld, "0.1.3", "ff9db27b6e53041168bb200dc04812ea3b60f8ff659200b72110d3e84ab3bfe7", [:rebar3], [{:b64fast, "0.2.1", [hex: :b64fast, repo: "hexpm", optional: false]}, {:erlexec, "1.7.1", [hex: :erlexec, repo: "hexpm", optional: false]}, {:jiffy, "0.14.11", [hex: :jiffy, repo: "hexpm", optional: false]}], "hexpm"},
   "ex_doc": {:hex, :ex_doc, "0.18.1", "37c69d2ef62f24928c1f4fdc7c724ea04aecfdf500c4329185f8e3649c915baf", [], [{:earmark, "~> 1.1", [hex: :earmark, repo: "hexpm", optional: false]}], "hexpm"},
   "flow": {:hex, :flow, "0.12.0", "32c5a5f3ff6693e004b6c17a8c64dce2f8cdaf9564912d79427176013a586ab6", [], [{:gen_stage, "~> 0.12.0", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm"},
   "gen_stage": {:hex, :gen_stage, "0.12.2", "e0e347cbb1ceb5f4e68a526aec4d64b54ad721f0a8b30aa9d28e0ad749419cbb", [], [], "hexpm"},
-  "jiffy": {:git, "https://github.com/davisp/jiffy.git", "06aaf440e091c9fd5f8aea557ac760a33bd37130", [tag: "0.14.11"]}}
+  "jiffy": {:hex, :jiffy, "0.14.11", "919a87d491c5a6b5e3bbc27fafedc3a0761ca0b4c405394f121f582fd4e3f0e5", [:rebar3], [], "hexpm"}}

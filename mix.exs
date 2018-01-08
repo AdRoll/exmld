@@ -1,13 +1,23 @@
 defmodule Exmld.Mixfile do
   use Mix.Project
 
+  @version "0.1.0"
+  @name "exmld"
+  @repo "https://github.com/AdRoll/#{@name}"
+
   def project do
     [
       app: :exmld,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package(),
+      docs: [source_ref: "v#{@version}",
+             source_url: @repo],
+      description: "An Elixir library for processing multiple Kinesis and " <>
+      "DynamoDB streams and shards in a single node using the Kinesis " <>
+      "Client Library and MultiLangDaemon."
     ]
   end
 
@@ -21,8 +31,17 @@ defmodule Exmld.Mixfile do
   defp deps do
     [
       {:flow, "~> 0.12.0"},
-      {:erlmld, git: "https://github.com/AdRoll/erlmld.git", tag: "v0.1.1"},
+      {:erlmld, "~> 0.1.3"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false}
     ]
+  end
+
+  defp package do
+    %{
+      name: @name,
+      licenses: ["BSD 3-Clause License"],
+      maintainers: ["AdRoll RTB team <rtb-team+#{@name}@adroll.com>"],
+      links: %{"GitHub" => @repo}
+    }
   end
 end

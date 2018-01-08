@@ -44,11 +44,11 @@ defmodule Exmld.KinesisWorker do
                                                                        non_neg_integer}]}}}
 
   @moduledoc """
-  An [ermld_flusher](https://github.com/AdRoll/erlmld/blob/master/src/erlmld_flusher.erl)
+  An [erlmld_flusher](https://github.com/AdRoll/erlmld/blob/master/src/erlmld_flusher.erl)
   which can interface with a `Exmld.KinesisStage` data source.
 
-  This implements an `erlmd_flusher` which can be used by `erlmld_batch_processor`.
-  Unlike a typical `erlmd_flusher`, it has a different notion of fullness: if more than
+  This implements an `erlmld_flusher` which can be used by `erlmld_batch_processor`.
+  Unlike a typical `erlmld_flusher`, it has a different notion of fullness: if more than
   `:max_pending` items are in flight, the worker waits for all pending items before
   emitting any more for downstream processing.  A periodic flush interval should be
   configured in the batch processor options.  Similarly, the downstream stage processing
@@ -81,7 +81,7 @@ defmodule Exmld.KinesisWorker do
   sub-record checkpointing should be turned off).
 
   Periodically (which should be at some multiple of the periodic flush interval),
-  `erlmd_batch_processor` will checkpoint based on the records which have so far been
+  `erlmld_batch_processor` will checkpoint based on the records which have so far been
   successfully processed (those whose tokens have been returned from `flush/2`).
   """
 
