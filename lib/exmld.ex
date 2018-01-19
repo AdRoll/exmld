@@ -161,14 +161,21 @@ defmodule Exmld do
     |> Flow.partition(key: partition_key,
                       stages: opts[:num_stages] || System.schedulers_online(),
                       min_demand: opts[:min_demand] || 1,
-                      max_demand: opts[:max_demand] || 500)
+                      max_demand: opts[:max_demand] || 500,
+                      window: opts[:window] || Flow.Window.global())
     |> Flow.reduce(state0, process_fn)
   end
 
-  def start_link(opts) do
+  @doc """
+  You can use this one to keep building your flow after calling flow/6 above.
+  """
+  def from_stages(opts) do
     Flow.from_stages(opts.stages)
     |> flow(opts.extract_items_fn, opts.partition_key,
             opts.state0, opts.process_fn, opts.flow_opts)
-    |> Flow.start_link()
+  end
+
+  def start_link(opts) do
+    from_stages(opts) |> Flow.start_link()
   end
 end
