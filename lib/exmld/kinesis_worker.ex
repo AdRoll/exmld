@@ -219,7 +219,7 @@ defmodule Exmld.KinesisWorker do
       # we received the same sequence number for two records; this should not happen.
       exit({:duplicate_seqno, sn})
     end
-    expect_multiple = :undefined == Exmld.sequence_number(sn, :sub)
+    expect_multiple = :undefined == Exmld.sequence_number(sn, :user_sub)
     stored_token = maybe_standard_token(token, sn)
     %{state | pending: Map.put(pending, sn, case expect_multiple do
                                               true ->
@@ -270,12 +270,12 @@ defmodule Exmld.KinesisWorker do
         # number has sub and total fields populated and a non-aggregate record was
         # received from upstream.  that non-aggregate record's sequence number (lacking
         # sub/total fields) was used as the key, and the value will be {token, [..]}.
-        sub = Exmld.sequence_number(sn, :sub)
-        total = Exmld.sequence_number(sn, :total)
+        sub = Exmld.sequence_number(sn, :user_sub)
+        total = Exmld.sequence_number(sn, :user_total)
         if :undefined == sub do
           exit({:missing_pending, sn})
         end
-        key = Exmld.sequence_number(sn, sub: :undefined, total: :undefined)
+        key = Exmld.sequence_number(sn, user_sub: :undefined, user_total: :undefined)
         {{token, seen}, pending} = Map.pop(pending, key)
         seen = [{sub, total} | seen]
         # if all expected items have been received, move token to done.  otherwise,
