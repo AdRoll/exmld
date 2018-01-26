@@ -116,8 +116,8 @@ defmodule Exmld.KinesisWorker do
     ## Fields
 
       * `:sequence_number` - `Exmld.sequence_number()` of the subject record.  If the
-      subject is an item extracted from a containing aggregate record, the `sub` and
-      `total` fields should be populated (whether KPL aggregation was used or not).
+      subject is an item extracted from a containing aggregate record, the `user_sub` and
+      `user_total` fields should be populated (whether KPL aggregation was used or not).
       * `:status`          - processing status
     """
     defstruct sequence_number: nil, status: nil
@@ -207,11 +207,13 @@ defmodule Exmld.KinesisWorker do
     {:ok, %{state | done: []}, done}
   end
 
-  # a record and token have been provided.  if the record is a kpl sub-record, it has
-  # base, sub, and total fields populated, and we expect a single disposition for it.
-  # otherwise, it's a normal record which will later have items extracted from it (we
+  # a record and token have been provided. If the record is a kpl sub-record, it has
+  # base, user_sub, and user_total fields populated, and we expect a single disposition for it. This
+  # is also the case for erlmld's custom kpl-like aggregated records (erlmld will make sure to
+  # extract the sub records and populate user_sub and user_total).
+  # otherwise, it's a normal record (non-kpl) which will later have items extracted from it (we
   # don't know how many), and we'll expect multiple dispositions for it (each containing a
-  # faked sequence number also containing populated base, sub, and total); once we receive
+  # faked sequence number also containing populated base, user_sub, and user_total); once we receive
   # all of those, it's done.
   defp note_pending(%__MODULE__{pending: pending} = state, record, token) do
     sn = Exmld.stream_record(record, :sequence_number)
@@ -219,7 +221,7 @@ defmodule Exmld.KinesisWorker do
       # we received the same sequence number for two records; this should not happen.
       exit({:duplicate_seqno, sn})
     end
-    expect_multiple = :undefined == Exmld.sequence_number(sn, :sub)
+    expect_multiple = :undefined == Exmld.sequence_number(sn, :user_sub)
     stored_token = maybe_standard_token(token, sn)
     %{state | pending: Map.put(pending, sn, case expect_multiple do
                                               true ->
@@ -248,14 +250,14 @@ defmodule Exmld.KinesisWorker do
   # a list of finished sequence numbers has been provided.  either:
   #
   # 1. we received a kpl sub-record from upstream and it was passed to a reducer.  we are
-  #    now receiving a sequence number with base, sub, and total fields populated.  that
+  #    now receiving a sequence number with base, user_sub, and user_total fields populated.  that
   #    sub-record would have been associated with one flusher token, which is now done.
   #
   # or:
   #
   # 2. we received a normal record from upstream and sub-records were later extracted by
-  #    the application.  the application should have assigned sequence numbers with sub
-  #    and total fields populated when informing us of disposition.  once all such items
+  #    the application.  the application should have assigned sequence numbers with user_sub
+  #    and user_total fields populated when informing us of disposition.  once all such items
   #    are done, we can consider the token associated with the original parent record as
   #    done.
   defp update_pending({state, completed_sequence_numbers}) do
@@ -267,15 +269,15 @@ defmodule Exmld.KinesisWorker do
     case Map.pop(pending, sn) do
       {nil, pending} ->
         # the sequence number doesn't exist in pending.  this will happen if the sequence
-        # number has sub and total fields populated and a non-aggregate record was
+        # number has user_sub and user_total fields populated and a non-aggregate record was
         # received from upstream.  that non-aggregate record's sequence number (lacking
-        # sub/total fields) was used as the key, and the value will be {token, [..]}.
-        sub = Exmld.sequence_number(sn, :sub)
-        total = Exmld.sequence_number(sn, :total)
+        # user_sub/user_total fields) was used as the key, and the value will be {token, [..]}.
+        sub = Exmld.sequence_number(sn, :user_sub)
+        total = Exmld.sequence_number(sn, :user_total)
         if :undefined == sub do
           exit({:missing_pending, sn})
         end
-        key = Exmld.sequence_number(sn, sub: :undefined, total: :undefined)
+        key = Exmld.sequence_number(sn, user_sub: :undefined, user_total: :undefined)
         {{token, seen}, pending} = Map.pop(pending, key)
         seen = [{sub, total} | seen]
         # if all expected items have been received, move token to done.  otherwise,
@@ -298,7 +300,7 @@ defmodule Exmld.KinesisWorker do
     case length(values) do
       ^total ->
         # every item must have the same total value, and each sub must be unique and cover
-        # the range 0..total-1.
+        # the range 0..user_total-1.
         expected = MapSet.new(0..(total-1))
         actual = MapSet.new(Enum.map(values, &(elem(&1, 0))))
         if MapSet.disjoint?(expected, actual) do
