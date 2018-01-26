@@ -1,7 +1,7 @@
 defmodule Exmld.Mixfile do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.1.2"
   @name "exmld"
   @repo "https://github.com/AdRoll/#{@name}"
 
