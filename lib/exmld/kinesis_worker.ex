@@ -317,7 +317,7 @@ defmodule Exmld.KinesisWorker do
   # pipeline can't keep up with the producer, so its parameters should be tuned.
   defp await_pending(%__MODULE__{await_sleep_interval: sleep_interval,
                                  pending: pending} = state) when map_size(pending) > 0 do
-    Logger.info("#{state.shard_id} awaiting #{inspect map_size(pending)} items...")
+    Logger.debug("#{state.shard_id} awaiting #{inspect map_size(pending)} items...")
     :timer.sleep(sleep_interval)
     state
     |> incr(:heartbeats, 1)
