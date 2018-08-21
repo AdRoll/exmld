@@ -2,7 +2,7 @@
   "b64fast": {:hex, :b64fast, "0.2.1", "ef67efd73109bf52a83338a2ded30d0dc4ec1b11449b4c43db970d3fc96cc9cd", [:rebar], [], "hexpm"},
   "earmark": {:hex, :earmark, "1.2.3", "206eb2e2ac1a794aa5256f3982de7a76bf4579ff91cb28d0e17ea2c9491e46a4", [], [], "hexpm"},
   "erlexec": {:hex, :erlexec, "1.7.1", "6ddbd40fa202084ed0bdaf95a50c334acaa5644ae213b903cd4094a78ae79734", [:rebar3], [], "hexpm"},
-  "erlmld": {:hex, :erlmld, "0.1.7", "8c81e8339d2ee5b7fab00d2c156d5df3140debacd389c139321cd7bffd0ad8a9", [:rebar3], [{:b64fast, "0.2.1", [hex: :b64fast, repo: "hexpm", optional: false]}, {:erlexec, "1.7.1", [hex: :erlexec, repo: "hexpm", optional: false]}, {:jiffy, "0.14.11", [hex: :jiffy, repo: "hexpm", optional: false]}], "hexpm"},
+  "erlmld": {:hex, :erlmld, "0.1.9", "16bf134dbd73f94c9abefb1b2b6a664c4b520d37877fb9eb02fc11df59fdcf0c", [:rebar3], [{:b64fast, "0.2.1", [hex: :b64fast, repo: "hexpm", optional: false]}, {:erlexec, "1.7.1", [hex: :erlexec, repo: "hexpm", optional: false]}, {:jiffy, "0.14.11", [hex: :jiffy, repo: "hexpm", optional: false]}], "hexpm"},
   "ex_doc": {:hex, :ex_doc, "0.18.1", "37c69d2ef62f24928c1f4fdc7c724ea04aecfdf500c4329185f8e3649c915baf", [], [{:earmark, "~> 1.1", [hex: :earmark, repo: "hexpm", optional: false]}], "hexpm"},
   "flow": {:hex, :flow, "0.14.2", "84687153dcd10e321a2b09b5d1db9511ed704337a553a46e8b0758fde0b7e75c", [:mix], [{:gen_stage, "~> 0.14.0", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm"},
   "gen_stage": {:hex, :gen_stage, "0.14.0", "65ae78509f85b59d360690ce3378d5096c3130a0694bab95b0c4ae66f3008fad", [:mix], [], "hexpm"},
