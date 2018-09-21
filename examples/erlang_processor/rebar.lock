@@ -1,0 +1,13 @@
+{"1.1.0",
+[{<<"erlexec">>,{pkg,<<"erlexec">>,<<"1.7.1">>},1},
+ {<<"erlmld">>,{pkg,<<"erlmld">>,<<"0.1.11">>},0},
+ {<<"exmld">>,{elixir,"exmld","0.1.8"},0},
+ {<<"flow">>,{elixir,"flow","0.14.2"},0},
+ {<<"gen_stage">>,{elixir,"gen_stage","0.14.0"},0},
+ {<<"jiffy">>,{pkg,<<"jiffy">>,<<"0.14.11">>},1}]}.
+[
+{pkg_hash,[
+ {<<"erlexec">>, <<"6DDBD40FA202084ED0BDAF95A50C334ACAA5644AE213B903CD4094A78AE79734">>},
+ {<<"erlmld">>, <<"138A053DC859F1702E5F47DB27BC4CE294786CA0834CC44CC950E7CDB7C0B478">>},
+ {<<"jiffy">>, <<"919A87D491C5A6B5E3BBC27FAFEDC3A0761CA0B4C405394F121F582FD4E3F0E5">>}]}
+].
