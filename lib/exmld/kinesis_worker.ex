@@ -207,6 +207,17 @@ defmodule Exmld.KinesisWorker do
     {:ok, %{state | done: []}, done}
   end
 
+  @doc """
+  The batch processor has received a possibly-empty set of records from the
+  MultiLangDaemon and is informing the flusher (us).  Send a heartbeat downstream and
+  return any completed tokens.  This allows progress to be made even if no more records
+  appear on the stream.
+  """
+  def heartbeat(state) do
+    %__MODULE__{done: done} = state = do_heartbeat(state)
+    {:ok, %{state | done: []}, done}
+  end
+
   # a record and token have been provided. If the record is a kpl sub-record, it has
   # base, user_sub, and user_total fields populated, and we expect a single disposition for it. This
   # is also the case for erlmld's custom kpl-like aggregated records (erlmld will make sure to
@@ -320,13 +331,19 @@ defmodule Exmld.KinesisWorker do
     Logger.debug("#{state.shard_id} awaiting #{inspect map_size(pending)} items...")
     :timer.sleep(sleep_interval)
     state
-    |> incr(:heartbeats, 1)
-    |> notify_downstream(:heartbeat)
-    |> update_pending()
+    |> do_heartbeat()
     |> await_pending()
   end
   defp await_pending(state) do
     state
+  end
+
+  # send a heartbeat downstream and note any returned item dispositions.
+  defp do_heartbeat(state) do
+    state
+    |> incr(:heartbeats, 1)
+    |> notify_downstream(:heartbeat)
+    |> update_pending()
   end
 
   # notify a downstream processing stage of a record or heartbeat and handle any returned
