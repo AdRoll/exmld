@@ -11,7 +11,7 @@ Edit
 -----
 
  Edit the following variables in
- [erlang_processor/src/erlang_processor_app.erl](erlang_processor/src/erlang_processor_app.erl)
+ [src/erlang_processor_app.erl](src/erlang_processor_app.erl)
  according to the resources in your account / desired testing:
 
   1. `StreamName`      - a kinesis stream name
