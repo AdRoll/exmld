@@ -1,7 +1,7 @@
 erlang_processor
 =====
 
-An example erlang kinesis record processing application using `exmld`.
+An example erlang kinesis / dynamodb streams processing application using `exmld`.
 
 Note: running this example as-is will incur new costs in your AWS account of ~$11/mo (two
 new dynamodb KCL state tables with default read/write capacity of 10/10).  Change the

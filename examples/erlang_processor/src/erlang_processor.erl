@@ -72,7 +72,8 @@ flow_extract(#{'__struct__' := 'Elixir.Exmld.KinesisStage.Event',
     %% record if all of its sub-records were processed.
     %%
     %% two records having the same key (first tuple element) here will be handled by the
-    %% same reducer.
+    %% same reducer.  in general, the key should be consistently derived from some
+    %% attribute of the record/item being processed.
     #{'__struct__' := 'Elixir.Exmld.KinesisWorker.Datum',
       stream_record := #stream_record{sequence_number = SN}} = Item,
     [{erlang:phash2(Item), #item{value = Item,
@@ -86,12 +87,12 @@ flow_extract(#{'__struct__' := 'Elixir.Exmld.KinesisStage.Event',
 %% whose initial state is given by 'state0' in flow_spec/4 above.  it returns an updated
 %% state after processing the event (and possibly flushing/updating the state
 %% accordingly).
-flow_process_event({_, heartbeat}, #state{} = State) ->
-    maybe_flush(State);
 flow_process_event({_Key, Item}, #state{} = State) ->
-    flow_add_record(Item, maybe_flush(State)).
+    maybe_flush(flow_add_record(Item, State)).
 
 
+flow_add_record(heartbeat, State) ->
+    State;
 flow_add_record(Item, #state{pending_items = Pending} = State) ->
     State#state{pending_items = [Item | Pending]}.
 

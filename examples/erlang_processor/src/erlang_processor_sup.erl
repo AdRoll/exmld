@@ -20,7 +20,7 @@ init(#{stage_names := StageNames,
                  period => 10},
 
     Producers =
-        [#{id => {kinesis_producer, N},
+        [#{id => {mld_producer, N},
            type => supervisor,
            shutdown => infinity,
            start => {erlmld_sup, start_link, [ProducerConfig]}}
