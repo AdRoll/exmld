@@ -39,4 +39,15 @@ capacity of each table to 1/1 to reduce to ~$1.20/mo.
 
 ## Observe
 
-    11:36:45.688 pid=<0.199.0> items=[%ElixirProcessor.Item{token: %ElixirProcessor.Token{sequence_number: {:sequence_number, 00000000000000000000000000000000, :undefined, 0, 1}, stage: #PID<0.189.0>, worker: #PID<0.212.0>}, value: {:stream_record, :undefined, :undefined, :undefined, {:sequence_number, 00000000000000000000000000000000, :undefined, :undefined, :undefined}, "{\"eventID\":\"00000000000000000000000000000000\",\"eventName\":\"REMOVE\",\"eventVersion\":\"1.1\",\"eventSource\":\"aws:dynamodb\",\"awsRegion\":\"us-west-2\",\"dynamodb\": ... event data ... }"}}] line=96 function=flush/1 module=ElixirProcessor file=lib/elixir_processor.ex application=elixir_processor [info]  processing batch
+    11:36:45.688 pid=<0.199.0> items=[%ElixirProcessor.Item{
+    token: %ElixirProcessor.Token{
+    sequence_number: {:sequence_number, 00000000000000000000000000000000, :undefined, 0, 1},
+    stage: #PID<0.189.0>,
+    worker: #PID<0.212.0>},
+    value: {:stream_record, :undefined, :undefined, :undefined,
+             {:sequence_number, 00000000000000000000000000000000, :undefined, :undefined, :undefined},
+             "{\"eventID\":\"00000000000000000000000000000000\",\"eventName\":\"REMOVE\",
+               \"eventVersion\":\"1.1\",\"eventSource\":\"aws:dynamodb\",\"awsRegion\":\"us-west-2\",
+               \"dynamodb\": ... event data ... }"}}]
+      line=96 function=flush/1 module=ElixirProcessor
+      file=lib/elixir_processor.ex application=elixir_processor [info]  processing batch
