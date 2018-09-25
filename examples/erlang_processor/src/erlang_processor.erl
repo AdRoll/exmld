@@ -86,7 +86,8 @@ flow_extract(#{'__struct__' := 'Elixir.Exmld.KinesisStage.Event',
 %% process an item extracted from a record (or a heartbeat).  this occurs in a reducer
 %% whose initial state is given by 'state0' in flow_spec/4 above.  it returns an updated
 %% state after processing the event (and possibly flushing/updating the state
-%% accordingly).
+%% accordingly).  here, we simply add the item to the current batch and possibly flush the
+%% batch.
 flow_process_event({_Key, Item}, #state{} = State) ->
     maybe_flush(flow_add_record(Item, State)).
 
@@ -143,7 +144,8 @@ flush(#state{pending_items = Pending} = State) ->
 
 
 %% group item processing disposition by origin stage and worker, informing each stage of
-%% the records (sequence numbers) from its workers which have been processed.
+%% the records (sequence numbers) from its workers which have been processed.  this allows
+%% upstream kinesis workers to safely checkpoint only fully processed data.
 notify_dispositions(Tokens, Status) ->
     RecipientMap =
         lists:foldl(
