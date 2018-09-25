@@ -127,6 +127,10 @@ start(_StartType, _StartArgs) ->
       %% name, they are considered as two workers in a single processing application.
       %% a single beam node processing multiple different streams needs a unique value
       %% for each stream:
+      %%
+      %% this is the same name as the corresponding elixir_processor example application;
+      %% if both the elixir and erlang versions are run at the same time, both will
+      %% cooperate in processing the stream.
       kcl_appname => <<"erlang-processor-kinesis-test">>,
 
       stream_name => StreamName,

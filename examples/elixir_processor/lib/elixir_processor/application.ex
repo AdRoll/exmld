@@ -164,7 +164,11 @@ defmodule ElixirProcessor.Application do
       # and checkpoints made by workers cooperating as part of an application.  if two
       # erlang nodes are running using the same value for this name, they are considered
       # as two workers in a single processing application.  a single beam node processing
-      # multiple different streams needs a unique value for each stream:
+      # multiple different streams needs a unique value for each stream.
+      #
+      # this is the same name as the corresponding erlang_processor example application;
+      # if both the elixir and erlang versions are run at the same time, both will
+      # cooperate in processing the stream.
       kcl_appname: "erlang-processor-kinesis-test",
       stream_name: stream_name,
       stream_region: stream_region,
