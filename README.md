@@ -30,3 +30,4 @@ application using this library can easily make full use of a worker's processing
 See:
 
   1. [example erlang processor](examples/erlang_processor/)
+  2. [example elixir processor](examples/elixir_processor/)
