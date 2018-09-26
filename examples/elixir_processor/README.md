@@ -39,7 +39,7 @@ capacity of each table to 1/1 to reduce to ~$1.20/mo.
 
 ## Observe
 
-    11:36:45.688 pid=<0.199.0> items=[%ElixirProcessor.Item{
+    11:36:45.688 pid=<0.199.0> full_batch_counter=9 counter=18 items=[%ElixirProcessor.Item{
     token: %ElixirProcessor.Token{
     sequence_number: {:sequence_number, 00000000000000000000000000000000, :undefined, 0, 1},
     stage: #PID<0.189.0>,

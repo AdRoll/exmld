@@ -7,7 +7,7 @@ defmodule ElixirProcessor do
   require Record
   require Exmld
 
-  defstruct [:flush_interval, :batch_size, :next_flush_time, :pending_items]
+  defstruct [:batch_size, :pending_items, full_batch_counter: 0, flush_counter: 0]
 
   defmodule Token do
     defstruct [:stage, :worker, :sequence_number]
@@ -19,29 +19,43 @@ defmodule ElixirProcessor do
 
   @doc """
   Return a flow spec which can be used to set up a processing pipeline; see exmld.ex.
+
+  The pipeline definition is similar but not identical to the version in
+  `erlang_processor`: here, we supply a window with a time-based trigger and modify the
+  flow using the `:append` option.
   """
   def flow_spec(stage_names, flow_options, opts \\ []) do
+    window =
+      Flow.Window.global()
+      |> Flow.Window.trigger_periodically(opts[:flush_interval] || 10000, :millisecond)
+
     %{
       stages: stage_names,
       extract_items_fn: &flow_extract/1,
       partition_key: {:elem, 0},
       state0: fn ->
         %__MODULE__{
-          flush_interval: opts[:flush_interval] || 10000,
           batch_size: opts[:batch_size] || 10,
-          pending_items: [],
-          next_flush_time: DateTime.utc_now()
+          pending_items: []
         }
       end,
-      process_fn: &flow_process_event/2,
-      flow_opts: flow_options
+      process_fn: &flow_add_event/2,
+      flow_opts:
+        flow_options ++
+          [
+            window: window,
+            append: fn flow ->
+              flow
+              |> Flow.on_trigger(&flow_flush/1)
+            end
+          ]
     }
   end
 
   # flow_extract/1 is called to extract sub-items from a kinesis or dynamo stream record.
   # this allows handling of both KPL-aggregated records and custom aggregation schemes.
   # the output of this function should be a list of 2-tuples ({key, value}) to be passed
-  # to flow_process_event/2 for processing in a reducer.
+  # to flow_add_event/2 for handling in a reducer.
   #
   # items seen by the extract function generally look like this:
   #
@@ -93,43 +107,46 @@ defmodule ElixirProcessor do
     end
   end
 
-  # process an item extracted from a record (or a heartbeat).  this occurs in a reducer
+  # handle an item extracted from a record (or a heartbeat).  this occurs in a reducer
   # whose initial state is given by 'state0' in flow_spec/3 above.  it returns an updated
-  # state after processing the event (and possibly flushing/updating the state
-  # accordingly).  here, we simply add the item to the current batch and possibly flush
-  # the batch.
-  defp flow_process_event({_key, item}, state) do
-    state
-    |> flow_add_record(item)
+  # state after possibly processing the event (and possibly flushing/updating the state
+  # accordingly).  here, we simply add non-heartbeat items to the current batch and flush
+  # the batch if it has reached the target size (we don't use an event based window which
+  # would count heartbeats).  if enough time elapses, a flush will be separately triggered
+  # by the flow window.
+  defp flow_add_event({_key, item}, %__MODULE__{pending_items: pending} = state) do
+    case item do
+      :heartbeat -> state
+      _ -> %{state | pending_items: [item | pending]}
+    end
     |> maybe_flush()
   end
 
-  defp flow_add_record(state, :heartbeat) do
+  # possibly process the current pending batch of records if of the appropriate size:
+  defp maybe_flush(
+         %__MODULE__{
+           pending_items: pending,
+           batch_size: batch_size,
+           full_batch_counter: c
+         } = state
+       )
+       when length(pending) >= batch_size do
+    elem(flow_flush(%{state | full_batch_counter: c + 1}), 1)
+  end
+
+  defp maybe_flush(state) do
     state
   end
 
-  defp flow_add_record(%__MODULE__{pending_items: pending} = state, item) do
-    %{state | pending_items: [item | pending]}
-  end
-
-  # possibly process the current pending batch of records if of the appropriate size or
-  # enough time has elapsed:
-  defp maybe_flush(state) do
-    if should_flush(state) do
-      {:ok, state, tokens} = flush(state)
-      :ok = notify_dispositions(tokens, :ok)
-      note_flush(state)
-    else
-      state
-    end
-  end
-
-  defp should_flush(%__MODULE__{
-         pending_items: pending,
-         batch_size: batch_size,
-         next_flush_time: next_flush
-       }) do
-    length(pending) >= batch_size or DateTime.compare(DateTime.utc_now(), next_flush) != :lt
+  # process the current pending batch of records, notify upstream of processing
+  # disposition, and return the events to emit downstream (the current state) and the new
+  # reducer accumulator (the updated state).  nothing in the current example makes use of
+  # the emitted value.
+  defp flow_flush(state) do
+    orig = state
+    {:ok, state, tokens} = flush(state)
+    :ok = notify_dispositions(tokens, :ok)
+    {[orig], state}
   end
 
   # process a batch of items which have been collected, returning {:ok, state, tokens}.
@@ -140,11 +157,13 @@ defmodule ElixirProcessor do
   # a kinesis worker can correctly checkpoint based on how far along downstream processing
   # has come (instead of for example automatically checkpointing based on time, which
   # could lose records).
-  defp flush(%__MODULE__{pending_items: pending} = state) do
-    Logger.info("processing batch", items: inspect(pending))
+  defp flush(
+         %__MODULE__{pending_items: pending, full_batch_counter: fc, flush_counter: c} = state
+       ) do
+    Logger.info("processing batch", items: inspect(pending), counter: c, full_batch_counter: fc)
     :timer.sleep(100 * length(pending))
     tokens = for %Item{token: token} <- pending, do: token
-    {:ok, %{state | pending_items: []}, tokens}
+    {:ok, %{state | pending_items: [], flush_counter: c + 1}, tokens}
   end
 
   # group item processing disposition by origin stage and worker, informing each stage of
@@ -160,17 +179,5 @@ defmodule ElixirProcessor do
     |> Enum.reduce(:ok, fn {stage, worker_map}, :ok ->
       Exmld.KinesisStage.disposition(stage, worker_map)
     end)
-  end
-
-  defp note_flush(%__MODULE__{flush_interval: flush_interval} = state) do
-    add = &+/2
-
-    {:ok, next_flush} =
-      DateTime.utc_now()
-      |> DateTime.to_unix(:millisecond)
-      |> add.(flush_interval)
-      |> DateTime.from_unix(:millisecond)
-
-    %{state | next_flush_time: next_flush}
   end
 end
