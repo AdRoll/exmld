@@ -156,6 +156,7 @@ defmodule Exmld do
            state0,
            process_fn,
            opts \\ []) do
+    extra = opts[:append] || &(&1)
     flow
     |> Flow.flat_map(extract_items_fn)
     |> Flow.partition(key: partition_key,
@@ -164,6 +165,7 @@ defmodule Exmld do
                       max_demand: opts[:max_demand] || 500,
                       window: opts[:window] || Flow.Window.global())
     |> Flow.reduce(state0, process_fn)
+    |> extra.()
   end
 
   @doc """
