@@ -1,0 +1,23 @@
+{application, erlang_processor,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { erlang_processor_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    erlexec,
+    elixir,
+    logger
+   ]},
+  {included_applications,
+   [erlmld,
+    exmld
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, ["BSD 3-Clause"]},
+  {links, []}
+ ]}.

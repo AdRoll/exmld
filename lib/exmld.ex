@@ -156,6 +156,7 @@ defmodule Exmld do
            state0,
            process_fn,
            opts \\ []) do
+    extra = opts[:append] || &(&1)
     flow
     |> Flow.flat_map(extract_items_fn)
     |> Flow.partition(key: partition_key,
@@ -164,6 +165,7 @@ defmodule Exmld do
                       max_demand: opts[:max_demand] || 500,
                       window: opts[:window] || Flow.Window.global())
     |> Flow.reduce(state0, process_fn)
+    |> extra.()
   end
 
   @doc """
@@ -177,5 +179,9 @@ defmodule Exmld do
 
   def start_link(opts) do
     from_stages(opts) |> Flow.start_link()
+  end
+
+  def child_spec(opts) do
+    %{id: __MODULE__, start: {__MODULE__, :start_link, [opts]}}
   end
 end
