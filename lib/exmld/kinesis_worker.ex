@@ -44,7 +44,7 @@ defmodule Exmld.KinesisWorker do
                                                                        non_neg_integer}]}}}
 
   @moduledoc """
-  An [erlmld_flusher](https://github.com/AdRoll/erlmld/blob/master/src/erlmld_flusher.erl)
+  An [erlmld_flusher](https://github.com/AdRoll/erlmld/blob/HEAD/src/erlmld_flusher.erl)
   which can interface with a `Exmld.KinesisStage` data source.
 
   This implements an `erlmld_flusher` which can be used by `erlmld_batch_processor`.

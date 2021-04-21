@@ -1,7 +1,7 @@
 defmodule Exmld do
   @moduledoc ~S"""
   This allows items extracted from Kinesis stream records (or sub-records in a [KPL
-  aggregate record](https://github.com/AdRoll/erlmld/blob/master/proto/kpl_agg.proto)) to
+  aggregate record](https://github.com/AdRoll/erlmld/blob/HEAD/proto/kpl_agg.proto)) to
   be processed by a pipeline of workers which may differ in number from the number of
   shards owned by the current node (which is the normal processing model offered by
   [erlmld](https://github.com/AdRoll/erlmld)).
