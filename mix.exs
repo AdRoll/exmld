@@ -1,7 +1,7 @@
 defmodule Exmld.Mixfile do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.0.1"
   @name "exmld"
   @repo "https://github.com/AdRoll/#{@name}"
 
@@ -31,7 +31,7 @@ defmodule Exmld.Mixfile do
   defp deps do
     [
       {:flow, "~> 0.14.2"},
-      {:erlmld, "~> 1.0.0"},
+      {:erlmld, "~> 1.0.1"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false}
     ]
   end
