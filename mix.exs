@@ -31,7 +31,7 @@ defmodule Exmld.Mixfile do
   defp deps do
     [
       {:flow, "~> 0.14.2"},
-      {:erlmld, "~> 0.2.3"},
+      {:erlmld, "~> 1.0.0"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false}
     ]
   end
