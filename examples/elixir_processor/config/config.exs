@@ -1,3 +1,3 @@
-use Mix.Config
+use Config
 
 config :logger, :console, metadata: :all
