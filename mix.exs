@@ -24,7 +24,6 @@ defmodule Exmld.Mixfile do
   def application do
     [
       extra_applications: [:logger],
-      applications: [:flow]
     ]
   end
 
