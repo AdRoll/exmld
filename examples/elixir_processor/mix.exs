@@ -5,7 +5,7 @@ defmodule ElixirProcessor.MixProject do
     [
       app: :elixir_processor,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -21,7 +21,7 @@ defmodule ElixirProcessor.MixProject do
 
   defp deps do
     [
-      {:exmld, "~> 0.1.9"}
+      {:exmld, "~> 1.0.2"}
     ]
   end
 end
