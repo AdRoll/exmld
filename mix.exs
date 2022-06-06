@@ -1,7 +1,7 @@
 defmodule Exmld.Mixfile do
   use Mix.Project
 
-  @version "1.0.2"
+  @version "1.0.3"
   @name "exmld"
   @repo "https://github.com/AdRoll/#{@name}"
 
@@ -38,7 +38,7 @@ defmodule Exmld.Mixfile do
   defp package do
     %{
       name: @name,
-      licenses: ["BSD 3-Clause License"],
+      licenses: ["BSD-3-Clause"],
       maintainers: ["AdRoll RTB team <rtb-team+#{@name}@adroll.com>"],
       links: %{"GitHub" => @repo}
     }
